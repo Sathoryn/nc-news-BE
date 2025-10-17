@@ -87,7 +87,6 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
 
       const convertedDate = updatedcomments.map(convertTimestampToDate);
       const formatedComments = formatData(convertedDate);
-      console.log(formatedComments);
       const insertCommentsData = format(
         `INSERT INTO comments
         (created_at, body, votes, author, article_id)
