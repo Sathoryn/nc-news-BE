@@ -17,14 +17,16 @@ exports.getIdAndCompareValue = (dataList, id, compare) => {
   });
   return keyValueList;
 };
-exports.feedIdFromCompareValue = (insertCompare, dataList, id, foreignIdName) => {
+exports.feedIdFromCompareValue = (title_ids, dataList, id, foreignIdName) => {
   const updatedList = dataList.map((data) => {
-    for (let compare of insertCompare) {
-      if (data[id] === compare[0]) {
+    for (let title_id of title_ids) {
+      if (data[id] === title_id[0]) {
         delete data.article_title;
-        return { ...data, [foreignIdName]: compare[1] };
+        data.article_id = title_id[1];
       }
     }
+    return data;
   });
+
   return updatedList;
 };

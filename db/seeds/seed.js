@@ -20,7 +20,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       INSERT INTO topics
       (description, slug, img_url)
       VALUES %L;`,
-        formatedTopics
+        formatData(topicData)
       );
       return db.query(insertTopicsData);
     })
@@ -84,7 +84,6 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     .then((articleData) => {
       const articleId = getIdAndCompareValue(articleData.rows, 'article_id', 'title');
       const updatedcomments = feedIdFromCompareValue(articleId, commentData, 'article_title', 'article_id');
-
       const convertedDate = updatedcomments.map(convertTimestampToDate);
       const formatedComments = formatData(convertedDate);
       const insertCommentsData = format(
