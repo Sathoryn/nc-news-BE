@@ -1,9 +1,21 @@
 const readArticles = require('../models/m_articles');
 
+const articles = readArticles()
+
 const getArticles = (req, res) => {
-  readArticles().then((body) => {
+  articles.then((body) => {
     res.status(200).send({ articles: body });
   });
 };
+
+
+
+
+
+
+
+
+
+
 
 module.exports = getArticles;

@@ -57,3 +57,21 @@ describe('get request "/api/articles"', () => {
       });
   });
 });
+
+describe('get request "/api/users"', () => {
+  test('200: responds with array of users', () => {
+    return request(app)
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        const users = body.users;
+        expect(users).toBeInstanceOf(Array);
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          expect(typeof user.username).toBe('string');
+          expect(typeof user.name).toBe('string');
+          expect(typeof user.avatar_url).toBe('string');
+        });
+      });
+  });
+});
