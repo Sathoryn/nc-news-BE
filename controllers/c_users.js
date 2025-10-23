@@ -1,13 +1,9 @@
-const readUsers = require ('../models/m_users')
+const readUsers = require('../models/m_users');
 
-const users = readUsers()
+const getUsers = (req, res) => {
+  readUsers().then((body) => {
+    res.status(200).send({ users: body });
+  });
+};
 
-const geUsers = (req,res)=>{
-users.then((body)=>{
-  res.status(200).send(({users:body}))
-})
-
-}
-
-
-module.exports = geUsers
+module.exports = getUsers;
