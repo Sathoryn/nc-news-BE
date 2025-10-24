@@ -1,6 +1,6 @@
 const getHealthCheck = require('./controllers/c_healthCheck');
 const getTopics = require('./controllers/c_topics');
-const { getNoBodyArticlesByDate, getArticleById } = require('./controllers/c_articles');
+const { getNoBodyArticles, getArticleById } = require('./controllers/c_articles');
 const getUsers = require('./controllers/c_users');
 const db = require('./db/connection');
 
@@ -12,7 +12,7 @@ app.get('/', getHealthCheck);
 
 app.get('/api/topics', getTopics);
 
-app.get('/api/articles', getNoBodyArticlesByDate);
+app.get('/api/articles', getNoBodyArticles);
 
 app.get('/api/users', getUsers);
 

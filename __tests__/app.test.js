@@ -84,6 +84,21 @@ describe('GET request "/api/articles"', () => {
         expect(articles).toEqual(sortedByDateRows);
       });
   });
+  test('200: only articles passed in as query in the endpoint, default sorting by created_at in descending order', () => {
+    return request(app)
+      .get('/api/articles?topic=cats')
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+
+        const testArticles = JSON.parse(JSON.stringify(articles));
+
+        const sortedByDateRows = testArticles.sort((articleA, articleB) => {
+          return new Date(articleB.created_at) - new Date(articleA.created_at);
+        });
+        expect(articles).toEqual(sortedByDateRows);
+      });
+  });
 });
 
 describe('GET request "/api/articles/:article_id"', () => {

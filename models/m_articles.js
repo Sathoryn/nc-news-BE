@@ -1,17 +1,20 @@
 const db = require('../db/connection');
 
-function readArticles(sort_by='created_at',order='DESC') {
-  const validSort = ['created_at','votes']
-  const validOrder = ['ASC','DESC']
+function readArticles(sort_by = 'created_at', order = 'DESC', topic = 'all') {
+  const validSort = ['created_at', 'votes'];
+  const validOrder = ['ASC', 'DESC'];
+  const validTopic = ['mitch', 'cats', 'paper', 'all'];
 
-  if(validSort.includes(sort_by) || validOrder.includes(order))
-  return db
-    .query(
-      `SELECT title, topic, author, created_at, votes,article_img_url, article_id FROM articles ORDER BY ${sort_by} ${order}`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+
+  let query = `SELECT title, topic, author, created_at, votes,article_img_url, article_id FROM articles `;
+
+  if (topic !== 'all') {;
+    query += `WHERE topic = '${topic}' `
+  }
+
+  return db.query(query + `ORDER BY ${sort_by} ${order}`).then(({ rows }) => {
+    return rows;
+  });
 }
 
 function readArticlesById() {}
