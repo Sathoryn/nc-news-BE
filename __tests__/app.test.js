@@ -70,6 +70,20 @@ describe('GET request "/api/articles"', () => {
         expect(articles).toEqual(sortedByDateRows);
       });
   });
+  test('200: sorts by votes in descending order if passed an endpoint of /api/articles?sort_by=votes&order=ASC', () => {
+    return request(app)
+      .get('/api/articles?sort_by=votes&order=ASC')
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        const testArticles = JSON.parse(JSON.stringify(articles));
+
+        const sortedByDateRows = testArticles.sort((articleA, articleB) => {
+          articleA.votes - articleB.votes;
+        });
+        expect(articles).toEqual(sortedByDateRows);
+      });
+  });
 });
 
 describe('GET request "/api/articles/:article_id"', () => {
