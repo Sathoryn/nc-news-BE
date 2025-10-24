@@ -3,7 +3,6 @@ const data = require('../db/data/test-data');
 const seed = require('../db/seeds/seed');
 const app = require('../app');
 const db = require('../db/connection');
-const { forEach } = require('../db/data/test-data/articles');
 
 beforeEach(() => {
   return seed(data);
@@ -12,13 +11,13 @@ afterAll(() => {
   return db.end();
 });
 
-describe('get request "/"', () => {
+describe('GET request "/"', () => {
   test('200: responds with "Hello there :)"', () => {
     return request(app).get('/').expect(200);
   });
 });
 
-describe('get request "/api/topics"', () => {
+describe('GET request "/api/topics"', () => {
   test('200: responds with array of topics', () => {
     return request(app)
       .get('/api/topics')
@@ -36,7 +35,7 @@ describe('get request "/api/topics"', () => {
   });
 });
 
-describe('get request "/api/articles"', () => {
+describe('GET request "/api/articles"', () => {
   test('200: responds with array of articles', () => {
     return request(app)
       .get('/api/articles')
@@ -56,9 +55,24 @@ describe('get request "/api/articles"', () => {
         });
       });
   });
+  test('200: default sorting by created_at in descending order', () => {
+    return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+
+        const testArticles = JSON.parse(JSON.stringify(articles));
+
+        const sortedByDateRows = testArticles.sort((articleA, articleB) => {
+          return new Date(articleB.created_at) - new Date(articleA.created_at);
+        });
+        expect(articles).toEqual(sortedByDateRows);
+      });
+  });
 });
 
-describe('get request "/api/articles/:article_id"', () => {
+describe('GET request "/api/articles/:article_id"', () => {
   test('200: responds with the requested id article', () => {
     return request(app)
       .get('/api/articles/3')
@@ -77,7 +91,7 @@ describe('get request "/api/articles/:article_id"', () => {
   });
 });
 
-describe('get request "/api/users"', () => {
+describe('GET request "/api/users"', () => {
   test('200: responds with array of users', () => {
     return request(app)
       .get('/api/users')
@@ -95,7 +109,7 @@ describe('get request "/api/users"', () => {
   });
 });
 
-describe('get request "/api/articles/:article_id/comments"', () => {
+describe('GET request "/api/articles/:article_id/comments"', () => {
   test('200: responds with the comments from the requested id article', () => {
     return request(app)
       .get('/api/articles/3/comments')
@@ -114,10 +128,24 @@ describe('get request "/api/articles/:article_id/comments"', () => {
         });
       });
   });
+  test('200: default sorting by created_at in descending order', () => {
+    return request(app)
+      .get('/api/articles/3/comments')
+      .expect(200)
+      .then(({ body }) => {
+        const comments = body.comments;
+        const testComments = JSON.parse(JSON.stringify(comments));
+
+        const sortedByDateRows = testComments.sort((commentA, commentB) => {
+          return new Date(commentB.created_at) - new Date(commentA.created_at);
+        });
+        expect(comments).toEqual(sortedByDateRows);
+      });
+  });
 });
 
-describe('post request "/api/articles/:article_id/comments"', () => {
-  test('201: responds with the posted comment', () => {
+describe('POST request "/api/articles/:article_id/comments"', () => {
+  test('201: responds with the a newly posted comment', () => {
     const newComment = { author: 'lurker', body: 'Lurker has posted a test comment' };
     return request(app)
       .post('/api/articles/3/comments')
@@ -135,8 +163,8 @@ describe('post request "/api/articles/:article_id/comments"', () => {
   });
 });
 
-describe('put request "/api/articles/:article_id"', () => {
-  test('200: responds with the patched article', () => {
+describe('PUT request "/api/articles/:article_id"', () => {
+  test('200: responds with the patched article increasing the number of votes', () => {
     const increaseVotes = { increaseVotes: 77 };
 
     return request(app)
@@ -144,7 +172,7 @@ describe('put request "/api/articles/:article_id"', () => {
       .send(increaseVotes)
       .expect(200)
       .then(({ body }) => {
-        const article = body.updatedArticle
+        const article = body.updatedArticle;
         expect(article.article_id).toBe(3);
         expect(typeof article.title).toBe('string');
         expect(typeof article.topic).toBe('string');
@@ -153,6 +181,17 @@ describe('put request "/api/articles/:article_id"', () => {
         expect(typeof article.created_at).toBe('string');
         expect(article.votes).toBe(77);
         expect(typeof article.article_img_url).toBe('string');
+      });
+  });
+});
+
+describe('DELETE request "/api/comments/:comment_id"', () => {
+  test('204: responds with an empty object representing the deleted comment', () => {
+    return request(app)
+      .get('/api/comments/11')
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
       });
   });
 });

@@ -5,9 +5,7 @@ const getUsers = require('./controllers/c_users');
 const db = require('./db/connection');
 
 const express = require('express');
-
 const app = express();
-
 app.use(express.json());
 
 app.get('/', getHealthCheck);
@@ -28,15 +26,9 @@ app.get('/api/articles/:article_id', (req, res) => {
 app.get('/api/articles/:article_id/comments', (req, res) => {
   const { article_id } = req.params;
   return db
-    .query('SELECT * FROM comments WHERE article_id = $1', [article_id])
+    .query('SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC', [article_id])
     .then(({ rows }) => {
-      const sortedByDateRows = rows.sort((commentA, commentB) => {
-        return new Date(commentB.created_at) - new Date(commentA.created_at);
-      });
-      return sortedByDateRows;
-    })
-    .then((body) => {
-      res.status(200).send({ comments: body });
+      res.status(200).send({ comments: rows });
     });
 });
 
@@ -69,11 +61,15 @@ app.put('/api/articles/:article_id', (req, res) => {
       [increaseVotes, article_id]
     )
     .then(({ rows }) => {
-      res.status(200).send({ updatedArticle : rows[0] });
-    })
+      res.status(200).send({ updatedArticle: rows[0] });
+    });
+});
+
+app.get('/api/comments/:comment_id', (req, res) => {
+  const { comment_id } = req.params;
+  return db.query('DELETE FROM comments WHERE comment_id = $1 RETURNING *', [comment_id]).then(({ rows }) => {
+    res.status(204).send({ comment: rows[0] });
+  });
 });
 
 module.exports = app;
-
-
-
