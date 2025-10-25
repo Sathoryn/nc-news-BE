@@ -217,7 +217,7 @@ describe('PUT request "/api/articles/:article_id"', () => {
 describe('DELETE request "/api/comments/:comment_id"', () => {
   test('204: responds with an empty object representing the deleted comment', () => {
     return request(app)
-      .get('/api/comments/11')
+      .delete('/api/comments/11')
       .expect(204)
       .then(({ body }) => {
         expect(body).toEqual({});

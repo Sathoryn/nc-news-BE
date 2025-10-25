@@ -4,7 +4,7 @@ const getTopics = require('./controllers/c_topics');
 
 const { getNoBodyArticles, getArticleById, putArticleVotes } = require('./controllers/c_articles');
 
-const { getCommentsbyArticleId, postCommentToArticle } = require('./controllers/c_comments');
+const { getCommentsbyArticleId, postCommentToArticle, deleteComment } = require('./controllers/c_comments');
 
 const getUsers = require('./controllers/c_users');
 
@@ -30,11 +30,6 @@ app.post('/api/articles/:article_id/comments', postCommentToArticle);
 
 app.put('/api/articles/:article_id', putArticleVotes);
 
-app.get('/api/comments/:comment_id', (req, res) => {
-  const { comment_id } = req.params;
-  return db.query('DELETE FROM comments WHERE comment_id = $1 RETURNING *', [comment_id]).then(({ rows }) => {
-    res.status(204).send({ comment: rows[0] });
-  });
-});
+app.delete('/api/comments/:comment_id', deleteComment);
 
 module.exports = app;
