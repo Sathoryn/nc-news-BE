@@ -174,7 +174,7 @@ describe('GET request "/api/articles/:article_id/comments"', () => {
 });
 
 describe('POST request "/api/articles/:article_id/comments"', () => {
-  test('201: responds with the a newly posted comment', () => {
+  test('201: responds with the a newly posted comment in specified article', () => {
     const newComment = { author: 'lurker', body: 'Lurker has posted a test comment' };
     return request(app)
       .post('/api/articles/3/comments')

@@ -1,4 +1,4 @@
-const { readCommentsByArticleId } = require('../models/m_comments');
+const { readCommentsByArticleId, createCommentToArticle } = require('../models/m_comments');
 
 const getCommentsbyArticleId = (req, res) => {
   const { article_id } = req.params;
@@ -8,4 +8,13 @@ const getCommentsbyArticleId = (req, res) => {
   });
 };
 
-module.exports = { getCommentsbyArticleId };
+const postCommentToArticle = (req, res) => {
+  const { article_id } = req.params;
+  const { author, body } = req.body;
+
+  createCommentToArticle(article_id, author, body).then((comment) => {
+    res.status(201).send({ comment: comment[0] });
+  })
+};
+
+module.exports = { getCommentsbyArticleId, postCommentToArticle };

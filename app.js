@@ -1,7 +1,7 @@
 const getHealthCheck = require('./controllers/c_healthCheck');
 const getTopics = require('./controllers/c_topics');
 const { getNoBodyArticles, getArticleById } = require('./controllers/c_articles');
-const {getCommentsbyArticleId} = require ('./controllers/c_comments')
+const {getCommentsbyArticleId, postCommentToArticle} = require ('./controllers/c_comments')
 
 const getUsers = require('./controllers/c_users');
 const db = require('./db/connection');
@@ -22,24 +22,8 @@ app.get('/api/articles/:article_id',getArticleById)
 
 app.get('/api/articles/:article_id/comments', getCommentsbyArticleId)
 
+app.post('/api/articles/:article_id/comments', postCommentToArticle)
 
-app.post('/api/articles/:article_id/comments', (req, res) => {
-  const { article_id } = req.params;
-  const { author, body } = req.body;
-
-  return db
-    .query(
-      `
-  INSERT INTO comments 
-  (article_id,author,body) 
-  VALUES
-  ($1,$2,$3) RETURNING *`,
-      [article_id, author, body]
-    )
-    .then(({ rows }) => {
-      res.status(201).send({ comment: rows[0] });
-    });
-});
 
 app.put('/api/articles/:article_id', (req, res) => {
   const { increaseVotes } = req.body;
