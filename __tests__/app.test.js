@@ -86,7 +86,7 @@ describe('GET request "/api/articles"', () => {
   });
   test('200: only articles passed in as query in the endpoint, default sorting by created_at in descending order', () => {
     return request(app)
-      .get('/api/articles?topic=cats')
+      .get('/api/articles?votes?topic=cats')
       .expect(200)
       .then(({ body }) => {
         const articles = body.articles;

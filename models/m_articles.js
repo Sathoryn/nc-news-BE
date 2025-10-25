@@ -8,8 +8,8 @@ function readArticles(sort_by = 'created_at', order = 'DESC', topic = 'all') {
 
   let query = `SELECT title, topic, author, created_at, votes,article_img_url, article_id FROM articles `;
 
-  if (topic !== 'all') {;
-    query += `WHERE topic = '${topic}' `
+  if (topic !== 'all') {
+    query += `WHERE topic = '${topic}' `;
   }
 
   return db.query(query + `ORDER BY ${sort_by} ${order}`).then(({ rows }) => {
@@ -17,6 +17,10 @@ function readArticles(sort_by = 'created_at', order = 'DESC', topic = 'all') {
   });
 }
 
-function readArticlesById() {}
+function readArticlesById(article_id) {
+  return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id]).then(({ rows }) => {
+    return rows;
+  });
+}
 
 module.exports = { readArticles, readArticlesById };

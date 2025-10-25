@@ -16,12 +16,8 @@ app.get('/api/articles', getNoBodyArticles);
 
 app.get('/api/users', getUsers);
 
-app.get('/api/articles/:article_id', (req, res) => {
-  const { article_id } = req.params;
-  return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id]).then(({ rows }) => {
-    res.status(200).send({ article: rows[0] });
-  });
-});
+app.get('/api/articles/:article_id',getArticleById)
+
 
 app.get('/api/articles/:article_id/comments', (req, res) => {
   const { article_id } = req.params;
