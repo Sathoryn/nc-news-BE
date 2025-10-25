@@ -26,4 +26,16 @@ function readArticlesById(article_id) {
   });
 }
 
-module.exports = { readArticles, readArticlesById };
+function updateArticleVotes(increaseVotes, article_id) {
+  return db
+    .query(
+      `
+    UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *`,
+      [increaseVotes, article_id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+}
+
+module.exports = { readArticles, readArticlesById, updateArticleVotes };

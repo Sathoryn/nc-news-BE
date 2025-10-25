@@ -1,6 +1,5 @@
 const db = require('../db/connection');
 
-
 function readCommentsByArticleId(article_id) {
   return db
     .query('SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC', [article_id])
@@ -9,7 +8,7 @@ function readCommentsByArticleId(article_id) {
     });
 }
 
-function createCommentToArticle(article_id,author,body) {
+function createCommentToArticle(article_id, author, body) {
   return db
     .query(
       `
@@ -24,4 +23,4 @@ function createCommentToArticle(article_id,author,body) {
     });
 }
 
-module.exports = { readCommentsByArticleId,createCommentToArticle };
+module.exports = { readCommentsByArticleId, createCommentToArticle };
