@@ -1,6 +1,8 @@
 const getHealthCheck = require('./controllers/c_healthCheck');
 const getTopics = require('./controllers/c_topics');
 const { getNoBodyArticles, getArticleById } = require('./controllers/c_articles');
+const {getCommentsbyArticleId} = require ('./controllers/c_comments')
+
 const getUsers = require('./controllers/c_users');
 const db = require('./db/connection');
 
@@ -18,15 +20,8 @@ app.get('/api/users', getUsers);
 
 app.get('/api/articles/:article_id',getArticleById)
 
+app.get('/api/articles/:article_id/comments', getCommentsbyArticleId)
 
-app.get('/api/articles/:article_id/comments', (req, res) => {
-  const { article_id } = req.params;
-  return db
-    .query('SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC', [article_id])
-    .then(({ rows }) => {
-      res.status(200).send({ comments: rows });
-    });
-});
 
 app.post('/api/articles/:article_id/comments', (req, res) => {
   const { article_id } = req.params;

@@ -5,6 +5,9 @@ function readArticles(sort_by = 'created_at', order = 'DESC', topic = 'all') {
   const validOrder = ['ASC', 'DESC'];
   const validTopic = ['mitch', 'cats', 'paper', 'all'];
 
+  // if(!validSort.includes(sort_by) || !validOrder.includes(order) || !validTopic.includes(topic)){
+  //   return Promise.reject({status:400, msg:'Bad request'})
+  // }
 
   let query = `SELECT title, topic, author, created_at, votes,article_img_url, article_id FROM articles `;
 
