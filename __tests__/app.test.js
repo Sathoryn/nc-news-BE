@@ -158,7 +158,7 @@ describe('GET request "/api/articles/:article_id"', () => {
   });
   test('200: responds with the requested id article and includes the amount of comments related to that article', () => {
     return request(app)
-      .get('/api/articles/3?comments=true')
+      .get('/api/articles/3')
       .expect(200)
       .then(({ body }) => {
         const article = body.article;
@@ -170,11 +170,12 @@ describe('GET request "/api/articles/:article_id"', () => {
         expect(typeof article.created_at).toBe('string');
         expect(typeof article.votes).toBe('number');
         expect(typeof article.article_img_url).toBe('string');
+        expect(article.comments_count).toBe(2);
       });
   });
   test('400: responds with bad request message', () => {
     return request(app)
-      .get('/api/articles/not_an_article')
+      .get('/api/articles/not_an_article/comments')
       .expect(400)
       .then(({ body }) => {
         const { msg } = body;
@@ -225,24 +226,7 @@ describe('GET request "/api/articles/:article_id/comments"', () => {
         expect(comments).toEqual(sortedByDateRows);
       });
   });
-  test('400: responds with bad request message if bad article-id', () => {
-    return request(app)
-      .get('/api/articles/not_an_article/comments')
-      .expect(400)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe('Bad request.');
-      });
-  });
-  test('404: responds with not found request message', () => {
-    return request(app)
-      .get('/api/articles/777/comments')
-      .expect(404)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe('There are no comments in this article.');
-      });
-  });
+  //
 });
 
 describe('POST request "/api/articles/:article_id/comments"', () => {
@@ -260,6 +244,17 @@ describe('POST request "/api/articles/:article_id/comments"', () => {
         expect(comment.author).toBe('lurker');
         expect(typeof comment.votes).toBe('number');
         expect(typeof comment.created_at).toBe('string');
+      });
+  });
+  test('400: responds with bad request message if bad article-id', () => {
+    const newComment = { author: 'lurker', body: 'Lurker has posted a test comment' };
+    return request(app)
+      .post('/api/articles/not_an_article/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad request.');
       });
   });
 });

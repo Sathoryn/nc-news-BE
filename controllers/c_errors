@@ -5,7 +5,6 @@ const handlePSQLErrors = (err, req, res, next) => {
 
 const handleCustomErrors = (err, req, res, next) => {
   const { status, msg } = err;
-
   if (status && msg) res.status(status).send({ msg: msg });
   else next(err);
 };

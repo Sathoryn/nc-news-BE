@@ -2,7 +2,6 @@ const { readCommentsByArticleId, createCommentToArticle, removeComment } = requi
 
 const getCommentsbyArticleId = (req, res) => {
   const { article_id } = req.params;
-
   return readCommentsByArticleId(article_id).then((comments) => {
     res.status(200).send({ comments: comments });
   });
@@ -11,7 +10,6 @@ const getCommentsbyArticleId = (req, res) => {
 const postCommentToArticle = (req, res) => {
   const { article_id } = req.params;
   const { author, body } = req.body;
-
   return createCommentToArticle(article_id, author, body).then((comment) => {
     res.status(201).send({ comment: comment[0] });
   });

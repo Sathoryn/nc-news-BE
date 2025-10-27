@@ -1,12 +1,13 @@
 const db = require('../db/connection');
+const { readCommentsByArticleId } = require('../models/m_comments');
 
 function readArticles(sort_by = 'created_at', order = 'DESC', topic = 'all') {
   const validSort = ['created_at', 'votes'];
   const validOrder = ['ASC', 'DESC'];
   const validTopic = ['mitch', 'cats', 'paper', 'all'];
 
-  if(!validSort.includes(sort_by) || !validOrder.includes(order) || !validTopic.includes(topic)){
-    return Promise.reject({status:400, msg:'Bad request.'})
+  if (!validSort.includes(sort_by) || !validOrder.includes(order) || !validTopic.includes(topic)) {
+    return Promise.reject({ status: 400, msg: 'Bad request.' });
   }
 
   let query = `SELECT title, topic, author, created_at, votes,article_img_url, article_id FROM articles `;
@@ -21,13 +22,20 @@ function readArticles(sort_by = 'created_at', order = 'DESC', topic = 'all') {
 }
 
 function readArticlesById(article_id) {
+  let comments_count = 0;
+
+  readCommentsByArticleId(article_id).then((comments) => {
+    comments_count = comments.length;
+  });
   return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id]).then(({ rows, rowCount }) => {
     if (rowCount === 0) {
-      return Promise.reject({ status: 404, msg: 'Article_id not found.'})
+      return Promise.reject({ status: 404, msg: 'Article_id not found.' });
     } else {
-      return rows};
-  })
-
+      rows = rows[0];
+      rows.comments_count = comments_count;
+      return [rows];
+    }
+  });
 }
 
 function updateArticleVotes(increaseVotes, article_id) {
