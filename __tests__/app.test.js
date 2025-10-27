@@ -55,7 +55,7 @@ describe('GET request "/api/articles"', () => {
         });
       });
   });
-  test('200: default sorting by created_at in descending order', () => {
+  test('200: defaults sorting by created_at in descending order', () => {
     return request(app)
       .get('/api/articles')
       .expect(200)
@@ -70,7 +70,7 @@ describe('GET request "/api/articles"', () => {
         expect(articles).toEqual(sortedByDateRows);
       });
   });
-  test('200: sorts by votes in descending order if passed an endpoint of /api/articles?sort_by=votes&order=ASC', () => {
+  test('200: sorts by votes in ascending order', () => {
     return request(app)
       .get('/api/articles?sort_by=votes&order=ASC')
       .expect(200)
@@ -84,38 +84,39 @@ describe('GET request "/api/articles"', () => {
         expect(articles).toEqual(sortedByDateRows);
       });
   });
-  test('200: only articles passed in as query in the endpoint, default sorting by created_at in descending order', () => {
+  test('200: responds with only the queried articles, default sorting by created_at in descending order', () => {
     return request(app)
-      .get('/api/articles?votes?topic=cats')
+      .get('/api/articles?topic=cats')
       .expect(200)
       .then(({ body }) => {
         const articles = body.articles;
-
         const testArticles = JSON.parse(JSON.stringify(articles));
 
         const sortedByDateRows = testArticles.sort((articleA, articleB) => {
           return new Date(articleB.created_at) - new Date(articleA.created_at);
         });
         expect(articles).toEqual(sortedByDateRows);
+        expect(articles).toEqual([
+          {
+            title: 'UNCOVERED: catspiracy to bring down democracy',
+            topic: 'cats',
+            author: 'rogersop',
+            created_at: '2020-08-03T13:14:00.000Z',
+            votes: 0,
+            article_img_url:
+              'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+            article_id: 5,
+          },
+        ]);
       });
   });
-});
-
-describe('GET request "/api/articles/:article_id"', () => {
-  test('200: responds with the requested id article', () => {
+  test('400: responds with bad request message', () => {
     return request(app)
-      .get('/api/articles/3')
-      .expect(200)
+      .get('/api/articles?sort_by=votes&order=invalid_order&?topic=cats')
+      .expect(400)
       .then(({ body }) => {
-        const article = body.article;
-        expect(article.article_id).toBe(3);
-        expect(typeof article.title).toBe('string');
-        expect(typeof article.topic).toBe('string');
-        expect(typeof article.author).toBe('string');
-        expect(typeof article.body).toBe('string');
-        expect(typeof article.created_at).toBe('string');
-        expect(typeof article.votes).toBe('number');
-        expect(typeof article.article_img_url).toBe('string');
+        const { msg } = body;
+        expect(msg).toBe('Bad request.');
       });
   });
 });
@@ -138,8 +139,61 @@ describe('GET request "/api/users"', () => {
   });
 });
 
+describe('GET request "/api/articles/:article_id"', () => {
+  test('200: responds with the requested article', () => {
+    return request(app)
+      .get('/api/articles/3')
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.article;
+        expect(article.article_id).toBe(3);
+        expect(typeof article.title).toBe('string');
+        expect(typeof article.topic).toBe('string');
+        expect(typeof article.author).toBe('string');
+        expect(typeof article.body).toBe('string');
+        expect(typeof article.created_at).toBe('string');
+        expect(typeof article.votes).toBe('number');
+        expect(typeof article.article_img_url).toBe('string');
+      });
+  });
+  test('200: responds with the requested id article and includes the amount of comments related to that article', () => {
+    return request(app)
+      .get('/api/articles/3?comments=true')
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.article;
+        expect(article.article_id).toBe(3);
+        expect(typeof article.title).toBe('string');
+        expect(typeof article.topic).toBe('string');
+        expect(typeof article.author).toBe('string');
+        expect(typeof article.body).toBe('string');
+        expect(typeof article.created_at).toBe('string');
+        expect(typeof article.votes).toBe('number');
+        expect(typeof article.article_img_url).toBe('string');
+      });
+  });
+  test('400: responds with bad request message', () => {
+    return request(app)
+      .get('/api/articles/not_an_article')
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad request.');
+      });
+  });
+  test('404: responds with not found request message', () => {
+    return request(app)
+      .get('/api/articles/777')
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Article_id not found.');
+      });
+  });
+});
+
 describe('GET request "/api/articles/:article_id/comments"', () => {
-  test('200: responds with the comments from the requested id article', () => {
+  test('200: responds with the comments from the requested article', () => {
     return request(app)
       .get('/api/articles/3/comments')
       .expect(200)
@@ -157,7 +211,7 @@ describe('GET request "/api/articles/:article_id/comments"', () => {
         });
       });
   });
-  test('200: default sorting by created_at in descending order', () => {
+  test('200: defaults sorting by created_at in descending order', () => {
     return request(app)
       .get('/api/articles/3/comments')
       .expect(200)
@@ -169,6 +223,24 @@ describe('GET request "/api/articles/:article_id/comments"', () => {
           return new Date(commentB.created_at) - new Date(commentA.created_at);
         });
         expect(comments).toEqual(sortedByDateRows);
+      });
+  });
+  test('400: responds with bad request message if bad article-id', () => {
+    return request(app)
+      .get('/api/articles/not_an_article/comments')
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad request.');
+      });
+  });
+  test('404: responds with not found request message', () => {
+    return request(app)
+      .get('/api/articles/777/comments')
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('There are no comments in this article.');
       });
   });
 });

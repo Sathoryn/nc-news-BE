@@ -10,18 +10,17 @@ const getNoBodyArticles = (req, res) => {
 
 const getArticleById = (req, res) => {
   const { article_id } = req.params;
-
-  return readArticlesById(article_id).then((article) => {
+  const {comments} = req.query
+  return readArticlesById(article_id,comments).then((article) => {
     res.status(200).send({ article: article[0] });
-  });
-};
+  })
+}
 
 const putArticleVotes = (req, res) => {
   const { increaseVotes } = req.body;
   const { article_id } = req.params;
 
-
-  updateArticleVotes(increaseVotes, article_id).then(( rows ) => {
+  updateArticleVotes(increaseVotes, article_id).then((rows) => {
     res.status(200).send({ updatedArticle: rows[0] });
   });
 };
