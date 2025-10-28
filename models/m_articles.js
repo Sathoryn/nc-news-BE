@@ -29,7 +29,7 @@ function readArticlesById(article_id) {
   });
   return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id]).then(({ rows, rowCount }) => {
     if (rowCount === 0) {
-      return Promise.reject({ status: 404, msg: 'Article_id not found.' });
+      return Promise.reject({ status: 404, msg: 'Nothing in this article' });
     } else {
       rows = rows[0];
       rows.comments_count = comments_count;
@@ -45,8 +45,12 @@ function updateArticleVotes(increaseVotes, article_id) {
     UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *`,
       [increaseVotes, article_id]
     )
-    .then(({ rows }) => {
-      return rows;
+    .then(({ rows, rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({ status: 404, msg: 'No comment found.' });
+      } else {
+        return rows;
+      }
     });
 }
 

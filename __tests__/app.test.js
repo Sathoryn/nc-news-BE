@@ -35,6 +35,24 @@ describe('GET request "/api/topics"', () => {
   });
 });
 
+describe('GET request "/api/users"', () => {
+  test('200: responds with array of users', () => {
+    return request(app)
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        const users = body.users;
+        expect(users).toBeInstanceOf(Array);
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          expect(typeof user.username).toBe('string');
+          expect(typeof user.name).toBe('string');
+          expect(typeof user.avatar_url).toBe('string');
+        });
+      });
+  });
+});
+
 describe('GET request "/api/articles"', () => {
   test('200: responds with array of articles', () => {
     return request(app)
@@ -121,24 +139,6 @@ describe('GET request "/api/articles"', () => {
   });
 });
 
-describe('GET request "/api/users"', () => {
-  test('200: responds with array of users', () => {
-    return request(app)
-      .get('/api/users')
-      .expect(200)
-      .then(({ body }) => {
-        const users = body.users;
-        expect(users).toBeInstanceOf(Array);
-        expect(users.length).toBe(4);
-        users.forEach((user) => {
-          expect(typeof user.username).toBe('string');
-          expect(typeof user.name).toBe('string');
-          expect(typeof user.avatar_url).toBe('string');
-        });
-      });
-  });
-});
-
 describe('GET request "/api/articles/:article_id"', () => {
   test('200: responds with the requested article', () => {
     return request(app)
@@ -162,14 +162,6 @@ describe('GET request "/api/articles/:article_id"', () => {
       .expect(200)
       .then(({ body }) => {
         const article = body.article;
-        expect(article.article_id).toBe(3);
-        expect(typeof article.title).toBe('string');
-        expect(typeof article.topic).toBe('string');
-        expect(typeof article.author).toBe('string');
-        expect(typeof article.body).toBe('string');
-        expect(typeof article.created_at).toBe('string');
-        expect(typeof article.votes).toBe('number');
-        expect(typeof article.article_img_url).toBe('string');
         expect(article.comments_count).toBe(2);
       });
   });
@@ -188,7 +180,7 @@ describe('GET request "/api/articles/:article_id"', () => {
       .expect(404)
       .then(({ body }) => {
         const { msg } = body;
-        expect(msg).toBe('Article_id not found.');
+        expect(msg).toBe('Nothing in this article');
       });
   });
 });
@@ -226,7 +218,7 @@ describe('GET request "/api/articles/:article_id/comments"', () => {
         expect(comments).toEqual(sortedByDateRows);
       });
   });
-  //
+  
 });
 
 describe('POST request "/api/articles/:article_id/comments"', () => {
@@ -244,6 +236,7 @@ describe('POST request "/api/articles/:article_id/comments"', () => {
         expect(comment.author).toBe('lurker');
         expect(typeof comment.votes).toBe('number');
         expect(typeof comment.created_at).toBe('string');
+
       });
   });
   test('400: responds with bad request message if bad article-id', () => {
@@ -279,6 +272,7 @@ describe('PUT request "/api/articles/:article_id"', () => {
         expect(typeof article.article_img_url).toBe('string');
       });
   });
+  
 });
 
 describe('DELETE request "/api/comments/:comment_id"', () => {

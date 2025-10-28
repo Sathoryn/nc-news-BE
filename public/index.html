@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nc-news-api</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+
+  <body>
+    <header>
+      <h1>News api</h1>
+      <p>This api will give you access news and their contents</p>
+    </header>
+
+    <main>
+      <nav>
+        <a href="topics">Topic</a>
+        <a href="users">Users</a>
+        <a href="articles">Articles</a>
+      </nav>
+
+
+      <section class="api-container" id="Topics">
+        <h2>Get topics</h2>
+        <h3>api/topic</h3>
+        <p> 
+          Gets a body containing all topics. <br />
+          e.g. information
+        </p>
+
+        <table>
+          <tr>
+            <th>description</th>
+            <th>slug</th>
+            <th>img_url</th>
+          </tr>
+          <tr>
+            <th>Cooking is love</th>
+            <th>cooking</th>
+            <th>https://shorturl.at/YyqjF</th>
+          </tr>
+        </table>
+      </section>
+
+      <section class="api-container" id="Users">
+        <h2>Get users</h2>
+        <h3>api/users</h3>
+        <p>
+          Gets a body containing all users. <br>
+          e.g. information
+        </p>
+
+        <table style=>
+          <tr>
+            <th>username</th>
+            <th>name</th>
+            <th>avatar_url</th>
+          </tr>
+          <tr>
+            <th>CoolToni2000</th>
+            <th>Toni</th>
+            <th>https://shorturl.at/8ZQhN</th>
+          </tr>
+        </table>
+      </section>
+
+      <section class="api-container" id="articles">
+        <h2>Get articles</h2>
+        <h3>api/articles</h3>
+        <p>
+          
+          Gets a body containing all articles. <br>
+          e.g. information:
+        </p>
+
+        <table>
+          <tr>
+            <th>title</th>
+            <th>topic</th>
+            <th>autor</th>
+            <th>created_at</th>
+            <th>votes</th>
+            <th>article_img_url</th>
+            <th>article_id</th>
+          </tr>
+          <tr>
+            <th>A cool title about cooking</th>
+            <th>cooking</th>
+            <th>Toni</th>
+            <th>2020-11-22T11:13:00.000Z</th>
+            <th>12</th>
+            <th>https://shorturl.at/C2Pio</th>
+            <th>1</th>
+          </tr>
+        </table>
+
+        <p>
+          By default the articles are shown in descending order based on their creation date. This behaviour can be
+          changed with the following queries.
+        </p>
+        <ul>
+          <li>?sort_by=[created_at, votes]</li>
+          <li>?order=[DESC, ASC]</li>
+        </ul>
+
+        <p>If only articles pertaining to a specific topic are required the following query can be used.</p>
+        <ul>
+          <li>?topic=[topic]</li>
+        </ul>
+      </section>
+
+      <section class="api-container" id="articles-id">
+        <h2>Get article by it's id</h2>
+        <h3>api/articles/:article_id</h3>
+        <p>
+          Gets a single article by the given id.<br>
+          An individualy requested article will, in adition, include the amount of comments made in response to it. <br>
+          e.g. endpoint
+        </p>
+        <ul>
+          <li>/api/articles/3</li>
+        </ul>
+
+      </section>
+
+      <section class="api-container"id="comments">
+        <h2>api/articles/:article_id/comments</h2>
+        <p>
+          Gets the body of all the comments writen to a specific article. <br> e.g. information:
+        </p>
+
+        <table>
+          <tr>
+            <th>comment_id</th>
+            <th>body</th>
+            <th>article_id</th>
+            <th>author</th>
+            <th>votes</th>
+            <th>created_at</th>
+          </tr>
+          <tr>
+            <th>17</th>
+            <th>This recipe is alright.</th>
+            <th>3</th>
+            <th>CoolToni2000</th>
+            <th>12</th>
+            <th>2020-10-03T13:18:00.000Z</th>
+          </tr>
+        </table>
+        <p> 
+          By default the comments are shown in descending order. <br>
+          e.g. endpoint
+        </p>
+        <ul>
+          <li>/api/articles/3/comments</li>
+        </ul>
+        <p>
+          A new comment can be added to an article by sending the a username and a message. <br> It should be formated in the following way. </br> e.g.
+          
+          { author: 'CoolToni2000', body: 'First comment ever!' }
+        </p>
+         
+
+
+      </section>
+
+      <section class="api-container" id="delete-comments">
+        <h2>Delete a comment</h2>
+        <h3>/api/comments/:comment</h3>
+        <p>
+          Deletes the indicated article by it's id . </br> e.g. endpoint       
+        </p>
+        <ul>
+          <li>/api/comments/11</li>
+        </ul>
+      </section>
+
+    </main>
+  </body>
+
+  <footer>footer links for stuff</footer>
+</html>

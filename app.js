@@ -9,6 +9,8 @@ const { handle500s, handleCustomErrors, handlePSQLErrors } = require('./controll
 const express = require('express');
 const app = express();
 
+app.use('/api', express.static('public'));
+
 app.use(express.json());
 
 app.get('/', getHealthCheck);
