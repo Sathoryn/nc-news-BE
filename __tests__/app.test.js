@@ -180,7 +180,7 @@ describe('GET request "/api/articles/:article_id"', () => {
       .expect(404)
       .then(({ body }) => {
         const { msg } = body;
-        expect(msg).toBe('Nothing in this article');
+        expect(msg).toBe('The article does not exist.');
       });
   });
 });
@@ -218,6 +218,15 @@ describe('GET request "/api/articles/:article_id/comments"', () => {
         expect(comments).toEqual(sortedByDateRows);
       });
   });
+  test('404: responds with not found request message', () => {
+    return request(app)
+      .get('/api/articles/777/comments')
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('No comments in this article');
+      });
+  });
   
 });
 
@@ -236,7 +245,6 @@ describe('POST request "/api/articles/:article_id/comments"', () => {
         expect(comment.author).toBe('lurker');
         expect(typeof comment.votes).toBe('number');
         expect(typeof comment.created_at).toBe('string');
-
       });
   });
   test('400: responds with bad request message if bad article-id', () => {

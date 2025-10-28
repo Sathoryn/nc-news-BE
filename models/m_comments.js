@@ -3,10 +3,19 @@ const db = require('../db/connection');
 function readCommentsByArticleId(article_id) {
   return db
     .query('SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC', [article_id])
-    .then(({ rows }) => {
-      return rows;
+    .then(({ rows,rowCount }) => {
+if (rowCount === 0) {
+        return Promise.reject({ status: 404, msg: 'No comments in this article' });
+      } else {
+        return rows
+      }
     });
 }
+
+
+
+
+
 
 function createCommentToArticle(article_id, author, body) {
   return db

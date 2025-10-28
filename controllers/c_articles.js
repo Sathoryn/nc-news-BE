@@ -11,7 +11,8 @@ const getNoBodyArticles = (req, res) => {
 const getArticleById = (req, res) => {
   const { article_id } = req.params;
   return readArticlesById(article_id).then((article) => {
-    res.status(200).send({ article: article[0] });
+
+    res.status(200).send({ article: article });
   });
 };
 

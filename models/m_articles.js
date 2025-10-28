@@ -1,5 +1,4 @@
 const db = require('../db/connection');
-const { readCommentsByArticleId } = require('../models/m_comments');
 
 function readArticles(sort_by = 'created_at', order = 'DESC', topic = 'all') {
   const validSort = ['created_at', 'votes'];
@@ -22,20 +21,24 @@ function readArticles(sort_by = 'created_at', order = 'DESC', topic = 'all') {
 }
 
 function readArticlesById(article_id) {
-  let comments_count = 0;
+  let article = null;
 
-  readCommentsByArticleId(article_id).then((comments) => {
-    comments_count = comments.length;
-  });
-  return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id]).then(({ rows, rowCount }) => {
-    if (rowCount === 0) {
-      return Promise.reject({ status: 404, msg: 'Nothing in this article' });
-    } else {
-      rows = rows[0];
-      rows.comments_count = comments_count;
-      return [rows];
-    }
-  });
+  return db
+    .query('SELECT * FROM articles WHERE article_id = $1', [article_id])
+    .then(({ rows, rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({ status: 404, msg: 'The article does not exist.' });
+      }
+      else{
+      
+      article = rows[0];
+      return db.query('SELECT * FROM comments WHERE article_id = $1', [article_id]);
+      }
+    })
+    .then(({rowCount}) => {
+      article.comments_count = rowCount
+      return article
+    });
 }
 
 function updateArticleVotes(increaseVotes, article_id) {
