@@ -12,11 +12,6 @@ if (rowCount === 0) {
     });
 }
 
-
-
-
-
-
 function createCommentToArticle(article_id, author, body) {
   return db
     .query(
@@ -28,6 +23,7 @@ function createCommentToArticle(article_id, author, body) {
       [article_id, author, body]
     )
     .then(({ rows }) => {
+      // console.log(rows)
       return rows;
     });
 }

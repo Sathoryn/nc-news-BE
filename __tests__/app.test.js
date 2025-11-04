@@ -254,6 +254,7 @@ describe('POST request "/api/articles/:article_id/comments"', () => {
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
+        console.log(body)
         const { msg } = body;
         expect(msg).toBe('Bad request.');
       });
