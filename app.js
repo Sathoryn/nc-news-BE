@@ -1,3 +1,4 @@
+const cors = require('cors')
 const getHealthCheck = require('./controllers/c_healthCheck');
 const getTopics = require('./controllers/c_topics');
 const { getNoBodyArticles, getArticleById, putArticleVotes } = require('./controllers/c_articles');
@@ -6,8 +7,12 @@ const getUsers = require('./controllers/c_users');
 
 const { handle500s, handleCustomErrors, handlePSQLErrors } = require('./controllers/c_errors');
 
+
+
 const express = require('express');
 const app = express();
+
+app.use(cors())
 
 app.use('/api', express.static('public'));
 
