@@ -32,7 +32,7 @@ app.get('/api/articles/:article_id/comments', getCommentsbyArticleId);
 
 app.post('/api/articles/:article_id/comments', postCommentToArticle);
 
-app.put('/api/articles/:article_id', putArticleVotes);
+app.patch('/api/articles/:article_id', putArticleVotes);
 
 app.delete('/api/comments/:comment_id', deleteComment);
 
